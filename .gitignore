@@ -1,0 +1,34 @@
+# Build directories
+build/
+cmake-build-*/
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+VisionBasedRCCarControl
+*.exe
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Config (if contains sensitive data)
+# config/config.json
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
