@@ -85,21 +85,25 @@ def find_drift_car(device_name_or_mac=None):
         
         # Check if this might be the DRIFT car
         name_lower = name.lower()
+        name_upper = name.upper()
         address_lower = address.lower()
         
         is_drift = False
         if device_name_or_mac:
             # Check if matches provided name or MAC
             if (device_name_or_mac.lower() in name_lower or 
+                device_name_or_mac.upper() in name_upper or
                 device_name_or_mac.lower() == address_lower):
                 is_drift = True
         else:
             # Auto-detect: Look for DRIFT-related names
             if ('drift' in name_lower or 
-                'echo dot' in name_lower or
-                'r3j' in name_lower or
+                'dr!ft' in name_lower or
+                name.startswith('DRiFT') or
+                name.startswith('DRIFT') or
                 name.startswith('DR!FT') or
-                name.startswith('DRIFT')):
+                'ED5C2384488D' in name_upper or  # Red car MAC in name
+                'F9AF3CE2D2F5' in name_upper):    # Gray car MAC in name
                 is_drift = True
         
         if is_drift:
@@ -109,7 +113,7 @@ def find_drift_car(device_name_or_mac=None):
     print("-" * 60)
     
     if not drift_candidates:
-        print("\n❌ No DRIFT car found!")
+        print("\n first try with mobile to find this device in the bro cancel GIG Indi clever pocket friendly means No DRIFT car found!")
         print("\nTroubleshooting:")
         print("  1. Make sure your car is powered ON")
         print("  2. Make sure car is in pairing/discoverable mode")
