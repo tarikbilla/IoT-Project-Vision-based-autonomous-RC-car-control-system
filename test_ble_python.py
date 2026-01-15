@@ -265,7 +265,7 @@ def interactive_mode(peripheral, characteristic):
                 continue
             
             if cmd == 's':
-                speed = 20
+                speed = 5
                 light = 1
                 left = 0
                 right = 0
@@ -280,13 +280,13 @@ def interactive_mode(peripheral, characteristic):
                 left = 20
                 right = 0
                 if speed == 0:
-                    speed = 20
+                    speed = 5
                 print(f"⬅️  LEFT TURN: Left={left}")
             elif cmd == 'r':
                 right = 20
                 left = 0
                 if speed == 0:
-                    speed = 20
+                    speed = 5
                 print(f"➡️  RIGHT TURN: Right={right}")
             elif cmd == 'f':
                 left = 0
