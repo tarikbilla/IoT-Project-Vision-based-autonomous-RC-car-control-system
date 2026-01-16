@@ -1,7 +1,13 @@
+/**
+ * @file boundary_detection.cpp
+ * @brief Implementation of ray-based boundary detection and guidance logic
+ */
+
 #include "boundary_detection.h"
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -81,6 +87,22 @@ void BoundaryDetection::updateRays(const Position& car_pos, double car_heading) 
 
 ControlVector BoundaryDetection::process(const cv::Mat& frame, const Position& car_position,
                                         const MovementVector& movement, int base_speed) {
+    // Validate inputs
+    if (frame.empty()) {
+        std::cerr << "Warning: Empty frame in boundary detection" << std::endl;
+        return ControlVector(0, 0, 0, 0);  // Return stop command
+    }
+    
+    // Validate car position is within frame bounds
+    if (car_position.x < 0 || car_position.x >= frame.cols ||
+        car_position.y < 0 || car_position.y >= frame.rows) {
+        std::cerr << "Warning: Car position out of bounds" << std::endl;
+        return ControlVector(0, 0, 0, 0);
+    }
+    
+    // Clamp base speed to valid range
+    base_speed = std::max(0, std::min(255, base_speed));
+    
     // Convert to grayscale
     if (frame.channels() == 3) {
         cv::cvtColor(frame, gray_frame_, cv::COLOR_BGR2GRAY);

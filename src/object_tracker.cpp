@@ -1,7 +1,13 @@
+/**
+ * @file object_tracker.cpp
+ * @brief Implementation of object tracking using OpenCV trackers (GOTURN, CSRT, KCF, MOSSE)
+ */
+
 #include "object_tracker.h"
 #include <iostream>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 namespace rc_car {
 
@@ -73,14 +79,27 @@ bool ObjectTracker::initialize(const cv::Mat& frame, const cv::Rect2d& bbox, Tra
 }
 
 bool ObjectTracker::update(const cv::Mat& frame, TrackingResult& result) {
+    // Validate state
     if (!initialized_ || tracker_.empty()) {
         result.tracking_lost = true;
         return false;
     }
     
+    // Validate input frame
+    if (frame.empty()) {
+        std::cerr << "Warning: Empty frame provided to tracker" << std::endl;
+        result.tracking_lost = true;
+        return false;
+    }
+    
+    // Update tracker
     bool ok = tracker_->update(frame, bbox_);
     
-    if (!ok || bbox_.width <= 0 || bbox_.height <= 0) {
+    // Validate bounding box
+    if (!ok || bbox_.width <= 0 || bbox_.height <= 0 || 
+        bbox_.x < 0 || bbox_.y < 0 ||
+        bbox_.x + bbox_.width > frame.cols || 
+        bbox_.y + bbox_.height > frame.rows) {
         result.tracking_lost = true;
         return false;
     }

@@ -1,8 +1,16 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point for Vision-Based Autonomous RC Car Control System
+ * @author Vision-Based Autonomous RC Car Control System
+ * @date 2024
+ */
+
 #include <iostream>
 #include <signal.h>
 #include <memory>
 #include <thread>
 #include <chrono>
+#include <cstdlib>
 #include <opencv2/highgui.hpp>
 #include "control_orchestrator.h"
 

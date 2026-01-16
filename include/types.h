@@ -1,3 +1,10 @@
+/**
+ * @file types.h
+ * @brief Common data structures and thread-safe utilities for RC car control system
+ * @author Vision-Based Autonomous RC Car Control System
+ * @date 2024
+ */
+
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -7,6 +14,11 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace rc_car {
 
@@ -26,12 +38,21 @@ struct MovementVector {
     MovementVector() : dx(0), dy(0) {}
     MovementVector(int dx, int dy) : dx(dx), dy(dy) {}
     
+    /**
+     * @brief Calculate magnitude (length) of movement vector
+     * @return Magnitude in pixels
+     */
     double magnitude() const {
-        return std::sqrt(dx * dx + dy * dy);
+        return std::sqrt(static_cast<double>(dx * dx + dy * dy));
     }
     
+    /**
+     * @brief Calculate angle of movement vector in degrees
+     * @return Angle in degrees (-180 to 180)
+     */
     double angle() const {
-        return std::atan2(dy, dx) * 180.0 / M_PI;
+        if (dx == 0 && dy == 0) return 0.0;
+        return std::atan2(static_cast<double>(dy), static_cast<double>(dx)) * 180.0 / M_PI;
     }
 };
 

@@ -1,6 +1,12 @@
+/**
+ * @file camera_capture.cpp
+ * @brief Implementation of camera capture module for real-time video frame acquisition
+ */
+
 #include "camera_capture.h"
 #include <iostream>
 #include <chrono>
+#include <stdexcept>
 
 namespace rc_car {
 
@@ -124,13 +130,24 @@ void CameraCapture::captureLoop() {
         
         auto start_time = std::chrono::steady_clock::now();
         
+        // Attempt to read frame from camera
         if (!cap_.read(frame)) {
-            std::cerr << "Warning: Failed to read frame from camera" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::cerr << "Warning: Failed to read frame from camera (attempt " 
+                      << " - camera may be disconnected)" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            
+            // Check if camera is still opened
+            if (!cap_.isOpened()) {
+                std::cerr << "Error: Camera connection lost. Stopping capture." << std::endl;
+                running_ = false;
+                break;
+            }
             continue;
         }
         
+        // Validate frame
         if (frame.empty()) {
+            std::cerr << "Warning: Received empty frame" << std::endl;
             continue;
         }
         
