@@ -22,7 +22,7 @@ private:
     bool connected_;
     std::atomic<bool> running_;
     std::thread send_thread_;
-    std::mutex control_mutex_;
+    mutable std::mutex control_mutex_;  // Mutable to allow locking in const member functions
     
     ControlVector current_control_;
     int command_send_rate_hz_;  // Target rate (e.g., 200 Hz)
