@@ -37,6 +37,7 @@ void printUsage(const char* program_name) {
 }
 
 int main(int argc, char* argv[]) {
+    // Try multiple config file paths (relative to executable or project root)
     std::string config_file = "config/config.json";
     bool manual_mode = false;
     bool show_ui = true;

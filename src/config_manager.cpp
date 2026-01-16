@@ -60,10 +60,26 @@ void ConfigManager::load(const std::string& config_file) {
 }
 
 void ConfigManager::parseConfigFile(const std::string& filepath) {
+    // Try the provided path first
     std::ifstream file(filepath);
+    
+    // If not found, try relative paths
+    if (!file.is_open()) {
+        // Try relative to current directory
+        std::string alt_path1 = "../" + filepath;
+        file.open(alt_path1);
+    }
+    
+    if (!file.is_open()) {
+        // Try from project root
+        std::string alt_path2 = "../../" + filepath;
+        file.open(alt_path2);
+    }
+    
     if (!file.is_open()) {
         std::cerr << "Warning: Could not open config file: " << filepath 
-                  << ". Using defaults." << std::endl;
+                  << " (also tried ../" << filepath << " and ../../" << filepath << ")" << std::endl;
+        std::cerr << "Using defaults. You can specify config file with: -c /path/to/config.json" << std::endl;
         return;
     }
     

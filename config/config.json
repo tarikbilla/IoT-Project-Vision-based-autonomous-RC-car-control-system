@@ -19,7 +19,7 @@ boundary.ray_angles=-60,0,60
 boundary.base_speed=10
 
 # ble settings
-ble.device_mac=f9:af:3c:e2:d2:f5
+ble.device_mac=ed:5c:23:84:48:8d
 ble.characteristic_uuid=6e400002-b5a3-f393-e0a9-e50e24dcca9e
 ble.device_identifier=bf0a00082800
 ble.command_rate_hz=200

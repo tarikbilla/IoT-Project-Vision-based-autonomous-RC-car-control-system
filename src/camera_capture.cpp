@@ -7,6 +7,7 @@
 #include <iostream>
 #include <chrono>
 #include <stdexcept>
+#include <string>
 
 namespace rc_car {
 
@@ -37,10 +38,34 @@ bool CameraCapture::initialize(int camera_index, int width, int height, int fps)
         cap_.release();
     }
     
-    // Open camera
-    cap_.open(camera_index);
+    // Open camera - try V4L2 backend first (more reliable on Linux)
+    // Format: "v4l2:///dev/video0" or just index
+    std::string camera_path = "v4l2:///dev/video" + std::to_string(camera_index);
+    
+    // Try V4L2 backend first
+    cap_.open(camera_path, cv::CAP_V4L2);
+    
+    // If V4L2 fails, try default backend
+    if (!cap_.isOpened()) {
+        std::cerr << "Warning: V4L2 backend failed, trying default backend..." << std::endl;
+        cap_.open(camera_index);
+    }
+    
+    // If still fails, try direct device path
+    if (!cap_.isOpened()) {
+        std::string dev_path = "/dev/video" + std::to_string(camera_index);
+        std::cerr << "Warning: Default backend failed, trying direct path: " << dev_path << std::endl;
+        cap_.open(dev_path, cv::CAP_V4L2);
+    }
+    
     if (!cap_.isOpened()) {
         std::cerr << "Error: Could not open camera " << camera_index << std::endl;
+        std::cerr << "Tried: v4l2:///dev/video" << camera_index << ", index " << camera_index 
+                  << ", and /dev/video" << camera_index << std::endl;
+        std::cerr << "Please check:" << std::endl;
+        std::cerr << "  1. Camera is connected and powered on" << std::endl;
+        std::cerr << "  2. User has video group permissions: sudo usermod -a -G video $USER" << std::endl;
+        std::cerr << "  3. Camera device exists: ls -l /dev/video*" << std::endl;
         return false;
     }
     
