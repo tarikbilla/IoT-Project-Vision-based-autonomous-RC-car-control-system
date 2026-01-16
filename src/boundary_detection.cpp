@@ -120,13 +120,11 @@ ControlVector BoundaryDetection::process(const cv::Mat& frame, const Position& c
     // Find minimum and maximum ray distances
     int min_distance = ray_max_length_;
     int max_distance = 0;
-    int min_index = 0;
     int max_index = 0;
     
     for (size_t i = 0; i < rays_.size(); ++i) {
         if (rays_[i].distance < min_distance) {
             min_distance = rays_[i].distance;
-            min_index = static_cast<int>(i);
         }
         if (rays_[i].distance > max_distance) {
             max_distance = rays_[i].distance;

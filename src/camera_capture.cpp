@@ -11,13 +11,13 @@
 namespace rc_car {
 
 CameraCapture::CameraCapture() 
-    : camera_index_(0), target_width_(1920), target_height_(1080), target_fps_(30),
-      running_(false), paused_(false) {
+    : running_(false), paused_(false),
+      camera_index_(0), target_width_(1920), target_height_(1080), target_fps_(30) {
 }
 
 CameraCapture::CameraCapture(int camera_index)
-    : camera_index_(camera_index), target_width_(1920), target_height_(1080), target_fps_(30),
-      running_(false), paused_(false) {
+    : running_(false), paused_(false),
+      camera_index_(camera_index), target_width_(1920), target_height_(1080), target_fps_(30) {
 }
 
 CameraCapture::~CameraCapture() {

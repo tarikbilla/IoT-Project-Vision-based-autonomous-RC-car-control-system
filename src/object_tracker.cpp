@@ -32,7 +32,9 @@ cv::Ptr<cv::Tracker> ObjectTracker::createTracker(TrackerType type) {
         case TrackerType::KCF:
             return cv::TrackerKCF::create();
         case TrackerType::MOSSE:
-            return cv::TrackerMOSSE::create();
+            // MOSSE tracker was removed in OpenCV 4.5.1+, fallback to KCF
+            std::cerr << "Warning: MOSSE tracker not available in OpenCV 4.10.0, using KCF instead" << std::endl;
+            return cv::TrackerKCF::create();
         default:
             std::cerr << "Warning: Unknown tracker type, using CSRT" << std::endl;
             return cv::TrackerCSRT::create();
@@ -60,8 +62,11 @@ bool ObjectTracker::initialize(const cv::Mat& frame, const cv::Rect2d& bbox, Tra
         return false;
     }
     
-    if (!tracker_->init(frame, bbox)) {
-        std::cerr << "Error: Failed to initialize tracker" << std::endl;
+    // In OpenCV 4.x, init() returns void, not bool
+    try {
+        tracker_->init(frame, bbox);
+    } catch (const cv::Exception& e) {
+        std::cerr << "Error: Failed to initialize tracker: " << e.what() << std::endl;
         initialized_ = false;
         return false;
     }
@@ -92,8 +97,12 @@ bool ObjectTracker::update(const cv::Mat& frame, TrackingResult& result) {
         return false;
     }
     
-    // Update tracker
-    bool ok = tracker_->update(frame, bbox_);
+    // Update tracker - need cv::Rect (int) not cv::Rect2d (double)
+    cv::Rect bbox_int;
+    bool ok = tracker_->update(frame, bbox_int);
+    
+    // Convert back to Rect2d for storage
+    bbox_ = cv::Rect2d(bbox_int);
     
     // Validate bounding box
     if (!ok || bbox_.width <= 0 || bbox_.height <= 0 || 
